@@ -8,6 +8,7 @@
 
 Unlike SSID (WiFi Name) which can be easily spoofed with a mobile hotspot, **Abhilekh** validates the unique hardware ID of the router:
 * **Authorized BSSID:** `f0:ed:b8:ad:5f:e5`
+* If you wish to change the BSSID, simply go to line 92 in main.dart file and change the BSSID as you wish.
 * **Security:** Prevents students from faking their location.
 * **Integrity:** Requires system-level GPS to be active, adding a second layer of location verification.
 
