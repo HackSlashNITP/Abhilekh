@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1043190868618",
+    "project_id": "abhilekh-3767e",
+    "storage_bucket": "abhilekh-3767e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043190868618:android:39afe5f675639e574d9b73",
+        "android_client_info": {
+          "package_name": "com.example.abhilekh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDhP350-PWAe2MrxgcW5H0u6Gfl4otMGs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
