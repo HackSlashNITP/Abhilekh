@@ -37,5 +37,5 @@ Unlike SSID (WiFi Name) which can be easily spoofed with a mobile hotspot, **Abh
 
 
 
-To access the app apk and assets, follow this drive link at the finest.
+To access the app apk and assets, follow this drive link at it's finest.
 https://drive.google.com/drive/folders/1BtDVOq0KsyKn1RYiMpjkjp4VNg5HPTZm?usp=sharing
