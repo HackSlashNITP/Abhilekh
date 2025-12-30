@@ -13,17 +13,50 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
+  final _rollCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   Future<void> _onRegisterPressed() async {
     if (!_formKey.currentState!.validate()) return;
+
+    final email = _emailCtrl.text.trim();
+    if (!email.endsWith('@nitp.ac.in')) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please use your institutional email "),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+    
+    final phone = _phoneCtrl.text.trim();
+    final roll = _rollCtrl.text.trim();
+
+    if (phone.isEmpty || roll.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please provide phone number and roll number'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
       await context.read<AuthBloc>().register(
-        _emailCtrl.text.trim(),
+        email,
         _passCtrl.text.trim(),
+        phone,
+        roll,
       );
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
@@ -41,6 +74,8 @@ class _SignupScreenState extends State<SignupScreen> {
   void dispose() {
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _phoneCtrl.dispose();
+    _rollCtrl.dispose();
     _confirmCtrl.dispose();
     super.dispose();
   }
@@ -107,13 +142,50 @@ class _SignupScreenState extends State<SignupScreen> {
                     controller: _emailCtrl,
                     decoration: InputDecoration(
                       labelText: 'Email Address',
-                      hintText: 'you@example.com',
+                      hintText: 'student@nitp.ac.in',
                       prefixIcon: const Icon(Icons.email_outlined),
+                                            helperText: 'Use your institutional email (@nitp.ac.in)',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    validator: (v) => (v == null || v.isEmpty || !v.contains('@')) ? 'Enter a valid email' : null,
+                    validator: (v) {
+                      if (v == null || v.isEmpty || !v.contains('@')) return 'Enter a valid email';
+                      if (!v.endsWith('@nitp.ac.in')) return 'Enter your official email id';
+                      return null;
+                    },
+                    onChanged: (value) => setState(() {}),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Phone Number Field
+                  TextFormField(
+                    controller: _phoneCtrl,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      hintText: '+91xxxxxxxxxx',
+                      prefixIcon: const Icon(Icons.phone),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (v) => (v == null || v.isEmpty) ? 'Enter phone number' : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Roll Number Field
+                  TextFormField(
+                    controller: _rollCtrl,
+                    decoration: InputDecoration(
+                      labelText: 'Roll Number',
+                      hintText: 'e.g. 20CS001',
+                      prefixIcon: const Icon(Icons.badge),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (v) => (v == null || v.isEmpty) ? 'Enter roll number' : null,
                   ),
                   const SizedBox(height: 16),
                   

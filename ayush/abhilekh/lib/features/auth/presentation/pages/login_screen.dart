@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../bloc/auth_bloc.dart';
 import 'signup_screen.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../attendance/presentation/pages/students_overview_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,21 +21,54 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   void _onLoginPressed() async {
+    final email = _emailCtrl.text.trim();
+    
+    // Validate email domain
+    if (!email.endsWith('@nitp.ac.in')) {
+      if(mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please use your institutional email"),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+    
     setState(() => _isLoading = true);
     try {
       await context.read<AuthBloc>().login(
-        _emailCtrl.text.trim(), 
-        _passCtrl.text.trim()
+        email,
+        _passCtrl.text.trim(),
       );
-      // Navigation happens automatically via AuthWrapper in main.dart
+
+      // After successful sign-in, check if user is admin
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance.collection(AppConstants.collectionUsers).doc(user.uid).get();
+        final role = doc.data()?['role']?.toString();
+        if (role == 'admin') {
+          // Navigate to admin homepage and clear stack
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const StudentsOverviewPage()),
+              (route) => false,
+            );
+            return;
+          }
+        }
+      }
+
+      // For non-admin users, AuthWrapper will navigate to student home.
     } catch (e) {
-      if(mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Login Failed: ${e.toString()}")),
         );
       }
     } finally {
-      if(mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -92,8 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _emailCtrl,
                     decoration: InputDecoration(
                       labelText: "Email Address",
-                      hintText: "you@example.com",
+                      hintText: "student@nitp.ac.in",
                       prefixIcon: const Icon(Icons.email_outlined),
+                                            helperText: "Use your institutional email ",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

@@ -6,9 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart'; 
 
 import 'injection_container.dart' as di;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'core/constants/app_constants.dart';
 import 'features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'features/attendance/presentation/pages/home_screen.dart';
+import 'features/attendance/presentation/pages/students_overview_page.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 import 'core/theme/app_theme.dart';
 
@@ -49,12 +53,30 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Listens to Authentication State to decide which screen to show
+    // Route based on auth state and admin role
     return BlocBuilder<AuthBloc, bool>(
       builder: (context, isLoggedIn) {
         if (isLoggedIn) {
-          return const StudentHomeScreen();
+          // Check user's role to show correct dashboard
+          return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            future: FirebaseFirestore.instance.collection(AppConstants.collectionUsers).doc(FirebaseAuth.instance.currentUser!.uid).get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              }
+              if (snapshot.hasError) {
+                return const StudentHomeScreen();
+              }
+              final doc = snapshot.data;
+              final role = doc?.data()?['role']?.toString();
+              if (role == 'admin') {
+                return const StudentsOverviewPage();
+              }
+              return const StudentHomeScreen();
+            },
+          );
         }
+
         return const LoginScreen();
       }, 
     );

@@ -21,10 +21,9 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
         isEntry ? "Checked In Successfully!" : "Checked Out Successfully!",
         newStatus: newStatus,
       ));
-      // Load the updated status after success
       await _loadUserStatus(emit);
     } catch (e) {
-      // Remove "Exception:" text for cleaner UI
+      // Clean error message for UI
       final cleanError = e.toString().replaceAll("Exception: ", "");
       emit(AttendanceFailure(cleanError));
     }
@@ -35,7 +34,6 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       final status = await repository.getUserStatus();
       emit(AttendanceLoaded(status));
     } catch (e) {
-      // If error loading status, keep current state
       final cleanError = e.toString().replaceAll("Exception: ", "");
       emit(AttendanceFailure(cleanError));
     }

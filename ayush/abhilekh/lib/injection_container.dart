@@ -12,13 +12,8 @@ import 'features/auth/data/auth_repository.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // ---------------------------------------------------------------------------
-  // FEATURES: ATTENDANCE
-  // ---------------------------------------------------------------------------
-  // Bloc
+  // Attendance feature setup
   sl.registerFactory(() => AttendanceBloc(repository: sl()));
-  
-  // Repository
   sl.registerLazySingleton<AttendanceRepository>(
     () => AttendanceRepository(
       firestore: sl(),
@@ -26,22 +21,13 @@ Future<void> init() async {
       campusGuard: sl(),
     ),
   );
-
-  // Data Source (Hardware Service)
   sl.registerLazySingleton(() => CampusGuardService(networkInfo: sl()));
 
-  // ---------------------------------------------------------------------------
-  // FEATURES: AUTH
-  // ---------------------------------------------------------------------------
-  // Bloc
+  // Auth feature setup
   sl.registerFactory(() => AuthBloc(authRepository: sl()));
-  
-  // Repository
   sl.registerLazySingleton(() => AuthRepository(auth: sl(), firestore: sl()));
 
-  // ---------------------------------------------------------------------------
-  // EXTERNAL LIBRARIES
-  // ---------------------------------------------------------------------------
+  // External services
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => NetworkInfo());

@@ -9,25 +9,21 @@ class CampusGuardService {
   CampusGuardService({required this.networkInfo});
 
   Future<void> validatePresence() async {
-    // 1. Check & Request Permissions
+    // Step 1: Request location permissions
     await _checkPermissions();
 
-    // 2. Check WiFi BSSID
+    // Step 2: Verify WiFi MAC address matches campus network
     final String? wifiBSSID = await networkInfo.getWifiBSSID();
-    
-    // Cleaning the BSSID string (removing quotes, lowercasing)
     final cleanBSSID = wifiBSSID?.replaceAll('"', '').toLowerCase().trim();
     final targetBSSID = AppConstants.campusBSSID.toLowerCase().trim();
 
     if (cleanBSSID != targetBSSID) {
-      // NOTE: For Simulator testing, you might comment this throw out.
-      // But for production, this is required.
       throw Exception(
         'Invalid WiFi.\nConnected: $cleanBSSID\nRequired: $targetBSSID'
       );
     }
 
-    // 3. Check Geolocation
+    // Step 3: Verify device is within campus radius
     final Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
@@ -51,8 +47,5 @@ class CampusGuardService {
     if (!locStatus.isGranted) {
       await Permission.location.request();
     }
-    
-    // For Android 10+ sometimes specific wifi permissions are needed depending on target SDK
-    // But usually location covers BSSID access.
   }
 }

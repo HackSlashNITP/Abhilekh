@@ -18,7 +18,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load user status when screen initializes
+    // Load user's current campus status when screen opens
     Future.delayed(Duration.zero, () {
       context.read<AttendanceBloc>().add(LoadUserStatusRequested());
     });
@@ -62,7 +62,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             }
           },
           builder: (context, state) {
-            // If loading, show spinner and block interactions
+            // Show loader while processing check-in/out
             if (state is AttendanceLoading) {
               return const Center(
                 child: CircularProgressIndicator(
@@ -71,8 +71,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               );
             }
 
-            // Determine current status
-            String currentStatus = 'OUTSIDE'; // default
+            // Determine current campus status
+            String currentStatus = 'OUTSIDE';
             if (state is AttendanceLoaded) {
               currentStatus = state.currentStatus;
             } else if (state is AttendanceSuccess && state.newStatus != null) {
@@ -81,11 +81,15 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
             final isInside = currentStatus == 'INSIDE';
 
-            return Padding(
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height - kToolbarHeight - 48,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                   // Status Card
                   Container(
                     padding: const EdgeInsets.all(24),
@@ -102,7 +106,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                     ),
                     child: Column(
                       children: [
-                        // Icon
+                        // Status icon
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -117,7 +121,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                         ),
                         const SizedBox(height: 20),
                         
-                        // Status Label
+                        // Status label
                         Text(
                           isInside ? "ON CAMPUS" : "OFF CAMPUS",
                           style: const TextStyle(
@@ -129,7 +133,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         
-                        // Current Status
+                        // Current status text
                         Text(
                           currentStatus,
                           style: const TextStyle(
@@ -144,7 +148,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                   
                   const SizedBox(height: 48),
                   
-                  // Action Section Title
+                  // Quick action buttons
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -158,7 +162,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Show "Enter Campus" button if OUTSIDE
+                  // Check-in button (visible when outside)
                   if (!isInside)
                     ActionButton(
                       label: "ENTER CAMPUS",
@@ -167,7 +171,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       onTap: () => context.read<AttendanceBloc>().add(CheckInRequested()),
                     ),
                   
-                  // Show "Leave Campus" button if INSIDE
+                  // Check-out button (visible when inside)
                   if (isInside)
                     ActionButton(
                       label: "LEAVE CAMPUS",
@@ -177,7 +181,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                     ),
                 ],
               ),
-            );
+            ),
+          );
           },
         ),
       ),
