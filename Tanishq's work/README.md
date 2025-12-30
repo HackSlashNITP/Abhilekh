@@ -34,3 +34,8 @@ Unlike SSID (WiFi Name) which can be easily spoofed with a mobile hotspot, **Abh
 1. **Configure Firebase:** `flutterfire configure --platforms="android,ios,web"`
 2. **Run Mobile:** `flutter run`
 3. **View Dashboard:** `flutter run -d chrome` (Append `/#/admin` to the URL).
+
+
+
+To access the app apk and assets, follow this drive link at the finest.
+https://drive.google.com/drive/folders/1BtDVOq0KsyKn1RYiMpjkjp4VNg5HPTZm?usp=sharing
