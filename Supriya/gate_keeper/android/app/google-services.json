@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "7258596606",
+    "project_id": "gate-keeper-ca928",
+    "storage_bucket": "gate-keeper-ca928.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:7258596606:android:1674eab526f7910ebeb1af",
+        "android_client_info": {
+          "package_name": "com.example.gate_keeper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTsN8Sj96FVPgMtetlhTDxYEIo6uKyjVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
