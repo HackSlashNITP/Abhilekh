@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768078164946",
+    "project_id": "abhilekh-rudra",
+    "storage_bucket": "abhilekh-rudra.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768078164946:android:3f3cf0098e4e69741e4e0b",
+        "android_client_info": {
+          "package_name": "com.example.rudraksha_task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnyED0p3jqeildwJ7dZRAu3TC3ti3IqTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
